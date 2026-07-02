@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fabi Lab 💅</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="nav-logo">💅 Fabi Lab</div>
+    <ul class="nav-links">
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#horarios">Horarios</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#reservar" class="btn-nav">Reservar</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Fabi Lab</h1>
+      <p class="hero-sub">Uñas que hablan por ti ✨</p>
+      <p class="hero-desc">Manicura · Pedicura · Nail Art · Uñas Acrílicas</p>
+      <a href="#reservar" class="btn-primary">Reservar Cita 💕</a>
+    </div>
+  </section>
+
+  <!-- ── SERVICIOS ── -->
+  <section id="servicios" class="seccion">
+    <h2 class="titulo-seccion">Nuestros Servicios</h2>
+    <p class="subtitulo">Cuida tus manos y pies con los mejores tratamientos</p>
+    <div class="servicios-grid">
+      {% for s in servicios %}
+      <div class="servicio-card">
+        <div class="servicio-icono">{{ s.icono }}</div>
+        <h3>{{ s.nombre }}</h3>
+        <p>{{ s.descripcion }}</p>
+        <span class="precio">Bs. {{ s.precio }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ── HORARIOS ── -->
+  <section id="horarios" class="seccion seccion-rosa">
+    <h2 class="titulo-seccion">Horarios Disponibles Hoy</h2>
+    <p class="subtitulo">Selecciona el horario ideal para ti</p>
+    <div class="horarios-grid">
+      {% for h in horarios %}
+      <div class="horario-chip">{{ h }}</div>
+      {% else %}
+      <p class="sin-horarios">No hay horarios disponibles por hoy. ¡Vuelve mañana! 🌸</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ── GALERÍA ── -->
+  <section id="galeria" class="seccion">
+    <h2 class="titulo-seccion">Galería — Antes & Después</h2>
+    <p class="subtitulo">Haz clic en una foto y desliza para comparar 👆</p>
+    <div class="galeria-grid">
+      {% for item in galeria %}
+      <div class="galeria-card" onclick="abrirModal(
+        '{{ url_for('static', filename='images/' + item.antes) }}',
+        '{{ url_for('static', filename='images/' + item.despues) }}',
+        '{{ item.servicio }}')">
+        <div class="comparacion">
+          <div class="comp-lado">
+            <span class="etiqueta antes">Antes</span>
+            <img src="{{ url_for('static', filename='images/' + item.antes) }}" alt="Antes"/>
+          </div>
+          <div class="comp-lado">
+            <span class="etiqueta despues">Después</span>
+            <img src="{{ url_for('static', filename='images/' + item.despues) }}" alt="Después"/>
+          </div>
+        </div>
+        <p class="galeria-servicio">{{ item.servicio }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ── MODAL ── -->
+  <div id="modal" class="modal" onclick="cerrarModal(event)">
+    <div class="modal-contenido">
+      <button class="modal-cerrar" onclick="cerrarModal()">✕</button>
+      <h3 id="modal-titulo" class="modal-titulo"></h3>
+      <p class="modal-instruccion">⬅️ Desliza para comparar ➡️</p>
+      <div class="slider-contenedor">
+        <img id="img-despues" class="slider-img" src="" alt="Después"/>
+        <div class="slider-overlay" id="sliderOverlay">
+          <img id="img-antes" class="slider-img" src="" alt="Antes"/>
+        </div>
+        <div class="slider-linea" id="sliderLinea">
+          <div class="slider-circulo">↔</div>
+        </div>
+        <input type="range" class="slider-control" id="sliderControl" min="0" max="100" value="50"/>
+        <span class="label-antes">Antes</span>
+        <span class="label-despues">Después</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FORMULARIO DE RESERVA ── -->
+  <section id="reservar" class="seccion seccion-rosa">
+    <h2 class="titulo-seccion">Reservar Cita 💅</h2>
+    <p class="subtitulo">Completa el formulario y te confirmamos tu cita</p>
+    <form class="formulario" id="formReserva">
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" name="nombre" placeholder="Ej. María García" required/>
+      </div>
+      <div class="form-group">
+        <label>Servicio</label>
+        <select name="servicio" required>
+          <option value="">-- Selecciona un servicio --</option>
+          {% for s in servicios %}
+          <option value="{{ s.nombre }}">{{ s.icono }} {{ s.nombre }} — Bs. {{ s.precio }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" name="fecha" id="fechaInput" required/>
+        </div>
+        <div class="form-group">
+          <label>Hora</label>
+          <select name="hora" id="horaSelect" required>
+            <option value="">-- Elige fecha primero --</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Teléfono / WhatsApp</label>
+        <input type="tel" name="telefono" placeholder="Ej. 71234567" required/>
+      </div>
+      <button type="submit" class="btn-primary btn-full">Confirmar Reserva ✨</button>
+    </form>
+    <div id="mensajeReserva" class="mensaje-reserva"></div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">💅 Fabi Lab</div>
+      <p>Uñas que hablan por ti</p>
+      <div class="footer-contacto">
+        <span>📍 Av/cambodromo-calle cochabamba</span>
+        <span>📞 +591 74718534</span>
+        <span>📸 @fabilab</span>
+      </div>
+      <p class="footer-copy">© 2026 Fabi Lab — Todos los derechos reservados</p>
+    </div>
+  </footer>
+
+  <script>
+    // ── Modal ──
+    function abrirModal(antes, despues, servicio) {
+      document.getElementById("img-antes").src = antes;
+      document.getElementById("img-despues").src = despues;
+      document.getElementById("modal-titulo").textContent = servicio;
+      document.getElementById("sliderControl").value = 50;
+      document.getElementById("sliderOverlay").style.width = "50%";
+      document.getElementById("sliderLinea").style.left = "50%";
+      document.getElementById("modal").classList.add("activo");
+    }
+    function cerrarModal(e) {
+      if (!e || e.target === document.getElementById("modal") || e.target.classList.contains("modal-cerrar")) {
+        document.getElementById("modal").classList.remove("activo");
+      }
+    }
+    document.getElementById("sliderControl").addEventListener("input", function() {
+      const v = this.value + "%";
+      document.getElementById("sliderOverlay").style.width = v;
+      document.getElementById("sliderLinea").style.left = v;
+    });
+
+    // ── Fecha mínima ──
+    document.getElementById("fechaInput").setAttribute("min", new Date().toISOString().split("T")[0]);
+
+    // ── Horarios por fecha ──
+    document.getElementById("fechaInput").addEventListener("change", async function () {
+      const res = await fetch(`/horarios-disponibles?fecha=${this.value}`);
+      const horarios = await res.json();
+      const sel = document.getElementById("horaSelect");
+      sel.innerHTML = horarios.length
+        ? horarios.map(h => `<option value="${h}">${h}</option>`).join("")
+        : `<option value="">Sin horarios disponibles</option>`;
+    });
+
+    // ── Envío reserva ──
+    document.getElementById("formReserva").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const res = await fetch("/reservar", { method: "POST", body: new FormData(this) });
+      const json = await res.json();
+      const msg = document.getElementById("mensajeReserva");
+      msg.textContent = json.msg;
+      msg.className = "mensaje-reserva " + (json.ok ? "ok" : "error");
+      if (json.ok) this.reset();
+    });
+  </script>
+</body>
+</html>
