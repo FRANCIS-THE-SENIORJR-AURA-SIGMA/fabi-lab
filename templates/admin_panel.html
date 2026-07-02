@@ -128,7 +128,7 @@
               <a href="/admin/accion/{{ r[0] }}/pendiente" class="btn-accion btn-pendiente">⏳ Pendiente</a>
               {% endif %}
               {% set msg_confirmada = "Hola " + r[1] + ", tu reserva en Fabi Lab está CONFIRMADA ✅💅%0A📅 Fecha: " + r[3] + "%0A⏰ Hora: " + r[4] + "%0A💅 Servicio: " + r[2] + "%0A¡Te esperamos! 🌸" %}
-              {% set msg_cancelada = "Hola " + r[1] + ", lamentablemente tu reserva en Fabi Lab ha sido CANCELADA ❌%0A📅 Fecha: " + r[3] + "%0A⏰ Hora: " + r[4] + "%0APor favor contáctanos para reagendar. 🌸" %}
+              {% set msg_cancelada = "Hola " + r[1] + ", lamentablemente tu reserva en Fabi Lab ha sido CANCELADA ❌%0A📆 Fecha: " + r[3] + "%0A⏰ Hora: " + r[4] + "%0APor favor contáctanos para reagendar. 🌸" %}
               {% if r[6] == 'confirmada' %}
               <a href="https://wa.me/591{{ r[5] }}?text={{ msg_confirmada }}" target="_blank" class="btn-accion" style="background:#25D366;color:#fff;">💬 Avisar</a>
               {% else %}
