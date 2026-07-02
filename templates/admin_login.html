@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Fabi Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#fff0f5,#f8c8d4);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+    .card{background:#fff;border-radius:20px;padding:48px 36px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(233,30,140,0.15);text-align:center;}
+    .logo{font-size:2.5rem;margin-bottom:8px;}
+    h1{color:#e91e8c;font-size:1.5rem;margin-bottom:4px;}
+    p{color:#888;font-size:.85rem;margin-bottom:32px;}
+    label{display:block;text-align:left;font-weight:600;font-size:.85rem;color:#444;margin-bottom:6px;}
+    input{width:100%;padding:12px 16px;border:2px solid #f8c8d4;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.95rem;outline:none;margin-bottom:18px;transition:border-color .2s;}
+    input:focus{border-color:#e91e8c;}
+    button{width:100%;padding:14px;background:#e91e8c;color:#fff;border:none;border-radius:30px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s;}
+    button:hover{background:#c0176f;}
+    .error{background:#fce4ec;color:#c62828;padding:12px;border-radius:10px;margin-bottom:20px;font-size:.9rem;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">💅</div>
+    <h1>Fabi Lab Admin</h1>
+    <p>Ingresa tus credenciales para acceder</p>
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+    <form method="POST">
+      <label>Usuario</label>
+      <input type="text" name="usuario" placeholder="fabi" required/>
+      <label>Contraseña</label>
+      <input type="password" name="password" placeholder="••••••••" required/>
+      <button type="submit">Ingresar →</button>
+    </form>
+  </div>
+</body>
+</html>

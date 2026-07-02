@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Admin — Fabi Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Poppins',sans-serif;background:#fff0f5;min-height:100vh;}
+    /* ── Navbar ── */
+    .navbar{background:#e91e8c;padding:16px 4%;display:flex;align-items:center;justify-content:space-between;}
+    .navbar h1{color:#fff;font-size:1.3rem;}
+    .navbar a{color:#fff;text-decoration:none;font-size:.9rem;background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:20px;}
+    .navbar a:hover{background:rgba(255,255,255,0.3);}
+    /* ── Stats ── */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:24px 4%;}
+    .stat-card{background:#fff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 4px 16px rgba(233,30,140,0.1);}
+    .stat-num{font-size:2rem;font-weight:700;color:#e91e8c;}
+    .stat-label{font-size:.8rem;color:#888;margin-top:4px;}
+    /* ── Filtros ── */
+    .filtros{padding:0 4% 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+    .filtros a{padding:8px 18px;border-radius:20px;text-decoration:none;font-size:.85rem;font-weight:600;background:#fff;color:#e91e8c;border:2px solid #f8c8d4;transition:all .2s;}
+    .filtros a.activo,.filtros a:hover{background:#e91e8c;color:#fff;border-color:#e91e8c;}
+    .filtros form{display:flex;gap:8px;}
+    .filtros input[type="date"]{padding:8px 12px;border:2px solid #f8c8d4;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.85rem;outline:none;}
+    .filtros button{padding:8px 16px;background:#e91e8c;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;}
+    /* ── Tabla ── */
+    .tabla-wrap{padding:0 4% 40px;overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(233,30,140,0.1);}
+    th{background:#e91e8c;color:#fff;padding:14px 16px;text-align:left;font-size:.85rem;}
+    td{padding:14px 16px;font-size:.85rem;color:#333;border-bottom:1px solid #f8c8d4;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#fff0f5;}
+    .badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;}
+    .badge.pendiente{background:#fff3cd;color:#856404;}
+    .badge.confirmada{background:#d1e7dd;color:#0a3622;}
+    .badge.cancelada{background:#f8d7da;color:#842029;}
+    .acciones{display:flex;gap:6px;}
+    .btn-accion{padding:6px 12px;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;transition:opacity .2s;}
+    .btn-accion:hover{opacity:.8;}
+    .btn-confirmar{background:#d1e7dd;color:#0a3622;}
+    .btn-cancelar{background:#f8d7da;color:#842029;}
+    .btn-pendiente{background:#fff3cd;color:#856404;}
+    .sin-reservas{text-align:center;padding:48px;color:#888;}
+    @media(max-width:768px){
+      .stats{grid-template-columns:repeat(2,1fr);}
+      .filtros{flex-direction:column;align-items:flex-start;}
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <h1>💅 Fabi Lab — Panel Admin</h1>
+    <a href="/admin/logout">Cerrar sesión</a>
+  </nav>
+
+  <!-- Estadísticas -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-num">{{ hoy_total }}</div>
+      <div class="stat-label">Reservas hoy</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#856404">{{ pendientes }}</div>
+      <div class="stat-label">Pendientes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#0a3622">{{ confirmadas }}</div>
+      <div class="stat-label">Confirmadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#842029">{{ canceladas }}</div>
+      <div class="stat-label">Canceladas</div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros">
+    <a href="/admin/panel" class="{{ 'activo' if filtro=='todas' }}">Todas</a>
+    <a href="/admin/panel?filtro=hoy" class="{{ 'activo' if filtro=='hoy' }}">Hoy</a>
+    <a href="/admin/panel?filtro=pendientes" class="{{ 'activo' if filtro=='pendientes' }}">Pendientes</a>
+    <a href="/admin/panel?filtro=confirmadas" class="{{ 'activo' if filtro=='confirmadas' }}">Confirmadas</a>
+    <a href="/admin/panel?filtro=canceladas" class="{{ 'activo' if filtro=='canceladas' }}">Canceladas</a>
+    <form method="GET" action="/admin/panel">
+      <input type="hidden" name="filtro" value="fecha"/>
+      <input type="date" name="fecha" value="{{ fecha }}"/>
+      <button type="submit">Buscar</button>
+    </form>
+  </div>
+
+  <!-- Tabla -->
+  <div class="tabla-wrap">
+    {% if reservas %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Cliente</th>
+          <th>Servicio</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservas %}
+        <tr>
+          <td>{{ r[0] }}</td>
+          <td><strong>{{ r[1] }}</strong></td>
+          <td>{{ r[2] }}</td>
+          <td>{{ r[3] }}</td>
+          <td>{{ r[4] }}</td>
+          <td><a href="https://wa.me/591{{ r[5] }}" target="_blank">📱 {{ r[5] }}</a></td>
+          <td><span class="badge {{ r[6] }}">{{ r[6].capitalize() }}</span></td>
+          <td>
+            <div class="acciones">
+              {% if r[6] != 'confirmada' %}
+              <a href="/admin/accion/{{ r[0] }}/confirmada" class="btn-accion btn-confirmar">✅ Confirmar</a>
+              {% endif %}
+              {% if r[6] != 'cancelada' %}
+              <a href="/admin/accion/{{ r[0] }}/cancelada" class="btn-accion btn-cancelar">❌ Cancelar</a>
+              {% endif %}
+              {% if r[6] != 'pendiente' %}
+              <a href="/admin/accion/{{ r[0] }}/pendiente" class="btn-accion btn-pendiente">⏳ Pendiente</a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="sin-reservas">
+      <p>😊 No hay reservas para mostrar</p>
+    </div>
+    {% endif %}
+  </div>
+
+</body>
+</html>
