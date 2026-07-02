@@ -209,9 +209,29 @@ body { font-family: var(--font-body); color: #333; background: var(--blanco); }
 .footer-copy { font-size: .8rem; opacity: .7; }
 
 /* ── Responsive ── */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .nav-links { display: none; }
-  .form-row  { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 3rem; }
+  .hero-sub { font-size: 1.1rem; }
+  .seccion { padding: 60px 4%; }
+  .titulo-seccion { font-size: 1.8rem; }
+
+  .servicios-grid { grid-template-columns: 1fr; gap: 16px; }
+  .servicio-card { padding: 24px 16px; }
+
+  .horarios-grid { gap: 8px; }
+  .horario-chip { padding: 8px 16px; font-size: .85rem; }
+
+  .galeria-grid { grid-template-columns: 1fr; gap: 20px; }
+  .comparacion { height: 160px; }
+  .comp-lado { height: 160px; }
+
   .formulario { padding: 24px 16px; }
+  .form-row { grid-template-columns: 1fr; }
+
+  .footer-contacto { flex-direction: column; gap: 12px; }
   .slider-contenedor { height: 240px; }
+
+  .modal-contenido { padding: 20px 14px; }
+  .modal-titulo { font-size: 1.2rem; }
 }
