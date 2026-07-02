@@ -25,6 +25,15 @@ def init_db():
             creado   TEXT DEFAULT (datetime('now','localtime'))
         )
     """)
+    # Agregar columnas si no existen (para bases de datos antiguas)
+    try:
+        cur.execute("ALTER TABLE reservas ADD COLUMN estado TEXT DEFAULT 'pendiente'")
+    except:
+        pass
+    try:
+        cur.execute("ALTER TABLE reservas ADD COLUMN creado TEXT DEFAULT (datetime('now','localtime'))")
+    except:
+        pass
     con.commit()
     con.close()
 
